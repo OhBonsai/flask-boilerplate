@@ -42,6 +42,19 @@ class Tag(BasePatch):
         self.tag = tag
 
 
+class Comment(BasePatch):
+    comment = Column(String(1024))
+
+    def __init__(self, user, comment):
+        """
+        :param user: User instance
+        :param comment: comment string
+        """
+        super(Comment, self).__init__()
+        self.user = user
+        self.tag = comment
+
+
 class Status(BasePatch):
     status = Column(String(16))
 
@@ -73,10 +86,23 @@ class StatusMixin(object):
     @declared_attr
     def status(self):
         self.Status = type(
-            '{}Label'.format(self.__name__),
+            '{}Status'.format(self.__name__),
             (Tag, BaseModel),
             dict(
                 __tablename__='{0:s}_status'.format(self.__tablename__),
                 parent_id=Column(Integer, ForeignKey('{0:s}.id'.format(self.__tablename__))),
                 parent=relationship(self)))
         return relationship(self.Status)
+
+
+class CommentMixin(object):
+    @declared_attr
+    def status(self):
+        self.Comment = type(
+            '{}Comment'.format(self.__name__),
+            (Tag, BaseModel),
+            dict(
+                __tablename__='{0:s}_comment'.format(self.__tablename__),
+                parent_id=Column(Integer, ForeignKey('{0:s}.id'.format(self.__tablename__))),
+                parent=relationship(self)))
+        return relationship(self.Comment)

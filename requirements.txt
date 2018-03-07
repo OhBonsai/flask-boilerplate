@@ -1,5 +1,5 @@
 sqlalchemy
-flask-bcrypt==0.7.1
+#flask-bcrypt==0.7.1
 flask-login==0.4.0
 flask-migrate==2.1.1
 flask-restful==0.3.6
