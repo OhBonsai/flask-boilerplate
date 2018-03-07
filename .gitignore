@@ -1,10 +1,9 @@
-# IDE project files
+# IDE project files.
 .idea
 
 # Ignore back-up files.
 *~
 
 # Ignore compiled Python files.
-*.pyc
-*.pyo
+*.py[cod]
 
