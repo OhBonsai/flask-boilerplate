@@ -17,7 +17,7 @@ from sqlalchemy.types import String
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship
 
-from sketch.models import (
+from app.models import (
     BaseModel,
     db_session
 )
@@ -73,7 +73,7 @@ class AccessControlMixin(object):
         """Get all instances that the user has read permission on.
 
         :param user: User instance
-        :return: instance of sketch.models.AclBaseQuery
+        :return: instance of app.models.AclBaseQuery
         """
 
         if not user:
@@ -93,8 +93,8 @@ class AccessControlMixin(object):
         """Get the specific access control entry for the user and permission.
 
         :param permission: String (read, write, delete)
-        :param user: sketch.models.user.User instance
-        :param group: sketch.models.user.Group instance
+        :param user: app.models.user.User instance
+        :param group: app.models.user.Group instance
         :param check_group: Does check group permission, default is True
         :return: An Access control entry or None
         """

@@ -24,8 +24,8 @@ from sqlalchemy.orm import (
     relationship
 )
 
-from sketch.models import BaseModel
-from sketch.models.patch import (
+from app.models import BaseModel
+from app.models.patch import (
     TagMixin,
     StatusMixin
 )

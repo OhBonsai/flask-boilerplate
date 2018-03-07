@@ -21,7 +21,7 @@ from sqlalchemy.ext.declarative import (
     declared_attr
 )
 
-from sketch.core.define import (
+from app.core.define import (
     HTTP_STATUS_CODE_NOT_FOUND,
     HTTP_STATUS_CODE_FORBIDDEN
 )

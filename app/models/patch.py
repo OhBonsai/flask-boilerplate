@@ -11,7 +11,7 @@ from sqlalchemy.types import String
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import relationship
 
-from sketch.models import (
+from app.models import (
     BaseModel,
     db_session
 )

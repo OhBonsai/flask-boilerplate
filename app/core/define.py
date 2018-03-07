@@ -1,6 +1,6 @@
 # coding=utf-8
 # Created by OhBonsai at 2018/3/7
-"""Definitions for Sketch"""
+"""Definitions for App"""
 
 # HTTP status codes
 HTTP_STATUS_CODE_OK = 200
