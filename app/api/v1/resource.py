@@ -2,7 +2,6 @@
 # Created by OhBonsai at 08/03/18.
 """This module holds version 1 of the Blog API."""
 
-
 from flask import (
     abort,
     current_app,
@@ -27,17 +26,6 @@ from sqlalchemy import (
 from app.core.define import *
 from app.models import db_session
 from app.models.blog import Post
-
-
-def bad_request(message):
-    """Function to set custom error message for HTTP 400 requests.
-
-    :param message: Message as string to return to the client.
-    :return Response object (instance of flask.wrappers.Response)
-    """
-    response = jsonify({'message': message})
-    response.status_code = HTTP_STATUS_CODE_BAD_REQUEST
-    return response
 
 
 class ResourceMixin(object):
@@ -102,7 +90,7 @@ class ResourceMixin(object):
         if not meta:
             meta = dict()
 
-        schema = {'meta': meta, 'objects': []}
+        schema = {'code': status_code, 'success': False, 'result': [], 'meta': meta}
 
         if model:
             if not model_fields:
@@ -110,10 +98,12 @@ class ResourceMixin(object):
                     model_fields = self.fields_registry[model.__tablename__]
                 except AttributeError:
                     model_fields = self.fields_registry[model[0].__tablename__]
-            schema['objects'] = [marshal(model, model_fields)]
+            schema['result'] = [marshal(model, model_fields)]
+            schema['success'] = True
 
         response = jsonify(schema)
-        response.status_code = status_code
+        # Axios can't capture other status_code except 200 :(
+        response.status_code = 200
         return response
 
 
@@ -129,10 +119,9 @@ class PostListResource(ResourceMixin, Resource):
 
     @login_required
     def get(self):
-        """Handles GET request to the resource.
+        """Handles GET request to post.
 
-        Returns:
-            List of posts (instance of flask.wrappers.Response)
+        :return List of posts (instance of flask.wrappers.Response)
         """
 
         posts = Post.all_with_acl().filter(
@@ -156,7 +145,22 @@ class PostListResource(ResourceMixin, Resource):
     def post(self):
         """Handles POST request to the resource.
 
-        Returns:
-            A post in JSON (instance of flask.wrappers.Response)
+        :return A post in JSON (instance of flask.wrappers.Response)
         """
         pass
+
+
+class ApiVersionResource(Resource):
+    """Resource for api version."""
+
+    @staticmethod
+    def get():
+        """Handles GET request to api version.
+
+        :return Api version in JSON
+        """
+        response = jsonify({
+            'api_version': 'v1'
+        })
+        response.status_code = HTTP_STATUS_CODE_OK
+        return response

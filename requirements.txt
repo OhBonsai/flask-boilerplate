@@ -1,3 +1,4 @@
+marshmallow
 sqlalchemy
 #flask-bcrypt==0.7.1
 flask-login==0.4.0
@@ -8,3 +9,5 @@ flask-sqlalchemy==2.2
 flask-testing==0.6.2
 flask-wtf==0.14.2
 flask==0.12.2
+webargs==1.2.0
+Flask-Cache==0.12
