@@ -2,9 +2,9 @@
 # Created by OhBonsai at 2018/3/7
 """This package handles setting up and providing the database connection."""
 
-from flask import abort
 from flask_login import current_user
 from flask_sqlalchemy import BaseQuery
+from flask_restful import reqparse
 from sqlalchemy import (
     create_engine,
     Column,
@@ -21,11 +21,10 @@ from sqlalchemy.ext.declarative import (
     declared_attr
 )
 
-from app.core.define import (
-    HTTP_STATUS_CODE_NOT_FOUND,
-    HTTP_STATUS_CODE_FORBIDDEN
+from app.core.error import (
+    InstanceNotFound,
+    NoPermission
 )
-
 
 engine = None
 session_maker = sessionmaker()
@@ -67,18 +66,52 @@ class AclBaseQuery(BaseQuery):
 
         obj = self.get(model_id)
         if not obj:
-            abort(HTTP_STATUS_CODE_NOT_FOUND)
+            raise InstanceNotFound
         try:
             if obj.get_status.status == 'deleted':
-                abort(HTTP_STATUS_CODE_NOT_FOUND)
+                raise InstanceNotFound
         except AttributeError:
             # It doesn't matter when model hadn't status field
             pass
         if obj.is_public:
             return obj
         if not obj.has_permission(user=current_user, permission='read'):
-            abort(HTTP_STATUS_CODE_FORBIDDEN)
+            raise NoPermission
         return obj
+
+
+class Pager(object):
+    """Util for paginate"""
+
+    parser = reqparse.RequestParser()\
+        .add_argument('page', type=int, default=1, store_missing=True)\
+        .add_argument('size', type=int, default=10, store_missing=True)
+
+    def __init__(self, page, count, size):
+        self.count = count
+        self.size = size
+        self.page = page
+        self.offset = (page - 1) * size
+
+    @classmethod
+    def paginate(cls, query):
+        params = cls.parser.parse_args()
+
+        count = query.count()
+        page = params.get('page')
+        size = params.get('size')
+
+        pager = cls(page, count, size)
+        return query.limit(size).offset(pager.offset), pager
+
+    @property
+    def args(self):
+        return {
+            'total': self.count,
+            'size': self.size,
+            'page': self.page,
+            'offset': self.offset
+        }
 
 
 @as_declarative()

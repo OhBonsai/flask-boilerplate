@@ -20,18 +20,18 @@ from sqlalchemy.orm import relationship
 
 from app.models import BaseModel
 from app.models.acl import AccessControlMixin
-from app.models.patch import TagMixin
 from app.models.patch import CommentMixin
 from app.models.patch import StatusMixin
 
 
-class Post(AccessControlMixin, TagMixin, StatusMixin, CommentMixin, BaseModel):
+class Post(AccessControlMixin, StatusMixin, CommentMixin, BaseModel):
     """Implements the Post model.
     """
 
     title = Column(String(32))
-    sub = Column(String(32))
+    sub = Column(String(128))
     user_id = Column(Integer, ForeignKey(u'user.id'))
+    user = relationship('User', backref='posts', lazy='select')
     content = Column(Text())
 
     def __init__(self, title, sub, user, content):

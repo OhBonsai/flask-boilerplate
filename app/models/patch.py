@@ -56,16 +56,18 @@ class Comment(BasePatch):
 
 
 class Status(BasePatch):
+    """There are some built-in Value: "deleted", "new"
+    """
     status = Column(String(16))
 
-    def __init__(self, user, tag):
+    def __init__(self, user, status):
         """
         :param user: User instance
         :param status: The type of status (string, e,g. created)
         """
         super(Status, self).__init__()
         self.user = user
-        self.tag = tag
+        self.status = status
 
 
 class TagMixin(object):
@@ -87,7 +89,7 @@ class StatusMixin(object):
     def status(self):
         self.Status = type(
             '{}Status'.format(self.__name__),
-            (Tag, BaseModel),
+            (Status, BaseModel),
             dict(
                 __tablename__='{0:s}_status'.format(self.__tablename__),
                 parent_id=Column(Integer, ForeignKey('{0:s}.id'.format(self.__tablename__))),
@@ -104,5 +106,29 @@ class CommentMixin(object):
             dict(
                 __tablename__='{0:s}_comment'.format(self.__tablename__),
                 parent_id=Column(Integer, ForeignKey('{0:s}.id'.format(self.__tablename__))),
-                parent=relationship(self)))
+                    parent=relationship(self)))
         return relationship(self.Comment)
+
+    def set_status(self, status):
+        """
+        Set status on object. Although this is a many-to-many relationship
+        this makes sure that the parent object only has one status set.
+
+        :param status: Name of the status
+        """
+        for _status in self.status:
+            self.status.remove(_status)
+        self.status.append(self.Status(user=None, status=status))
+        db_session.commit()
+
+    @property
+    def get_status(self):
+        """Get the current status.
+
+
+        :return The status as a string
+        """
+        if not self.status:
+            self.status.append(self.Status(user=None, status=u'new'))
+        return self.status[0]
+

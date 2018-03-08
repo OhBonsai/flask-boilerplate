@@ -3,7 +3,6 @@
 """This module holds version 1 of the Blog API."""
 
 from flask import (
-    abort,
     current_app,
     jsonify,
     request
@@ -15,7 +14,6 @@ from flask_login import (
 from flask_restful import (
     fields,
     marshal,
-    reqparse,
     Resource
 )
 from sqlalchemy import (
@@ -23,65 +21,33 @@ from sqlalchemy import (
     not_
 )
 
-from app.core.define import *
-from app.models import db_session
+from app.core.error import (
+    InstanceNotFound,
+    NoPermission
+)
+from app.core.define import HTTP_STATUS_CODE_OK
+from app.models import (
+    db_session,
+    Pager
+)
 from app.models.blog import Post
+from app.schema.schema import PostSchema
 
 
 class ResourceMixin(object):
     """Mixin for API resources."""
-    
+
     # Schemas for database model resources
-    user_fields = {'username': fields.String}
-    
-    status_fields = {
-        'id': fields.Integer,
-        'status': fields.String,
-        'created_at': fields.DateTime,
-        'updated_at': fields.DateTime
+    schema_registry = {
+        'post': PostSchema,
     }
 
-    comment_fields = {
-        'comment': fields.String,
-        'user': fields.Nested(user_fields),
-        'created_at': fields.DateTime,
-        'updated_at': fields.DateTime
-    }
-
-    tag_fields = {
-        'tag': fields.String,
-        'user': fields.Nested(user_fields),
-        'created_at': fields.DateTime,
-        'updated_at': fields.DateTime
-    }
-    
-    post_fields = {
-        'id': fields.Integer,
-        'title': fields.String,
-        'user': fields.Nested(user_fields),
-        'sub': fields.String,
-        'content': fields.String,
-        'created_at': fields.DateTime,
-        'updated_at': fields.DateTime
-    }
-    
-    fields_registry = {
-        'user': user_fields,
-        'post': post_fields,
-        'post_comment': comment_fields,
-        'post_tag': tag_fields
-    }
-
-    def to_json(self,
-                model,
-                model_fields=None,
-                meta=None,
-                status_code=HTTP_STATUS_CODE_OK):
+    def to_json(self, instance, schema, meta=None, status_code=HTTP_STATUS_CODE_OK):
         """Create json response from a database models.
 
-        :param model: Instance of a database model
-        :param model_fields: Dictionary describing the resulting schema
+        :param instance: Instance of a database model
         :param meta: Dictionary holding any metadata for the result
+        :param schema: Schema of this model
         :param status_code: Integer used as status_code in the response
 
         :return Response in json format (instance of flask.wrappers.Response)
@@ -90,18 +56,20 @@ class ResourceMixin(object):
         if not meta:
             meta = dict()
 
-        schema = {'code': status_code, 'success': False, 'result': [], 'meta': meta}
+        result = {'status': status_code, 'success': False, 'result': None, 'meta': meta}
 
-        if model:
-            if not model_fields:
+        if instance:
+            if not schema:
                 try:
-                    model_fields = self.fields_registry[model.__tablename__]
+                    schema = self.schema_registry[instance.__tablename__]()
                 except AttributeError:
-                    model_fields = self.fields_registry[model[0].__tablename__]
-            schema['result'] = [marshal(model, model_fields)]
+                    # if instance is list object
+                    schema = self.schema_registry[instance[0].__tablename__](many=True)
+
+            schema['result'] = schema.dump(instance)
             schema['success'] = True
 
-        response = jsonify(schema)
+        response = jsonify(result)
         # Axios can't capture other status_code except 200 :(
         response.status_code = 200
         return response
@@ -110,42 +78,59 @@ class ResourceMixin(object):
 class PostListResource(ResourceMixin, Resource):
     """Resource for listing posts."""
 
+    paginate = True
+
     def __init__(self):
         super(PostListResource, self).__init__()
-        self.parser = reqparse.RequestParser()
-        self.parser.add_argument('title', type=str, required=True)
-        self.parser.add_argument('sub', type=str, required=False)
-        self.parser.add_argument('content', type=str, required=True)
 
     @login_required
     def get(self):
-        """Handles GET request to post.
+        """
+        @api {get} /posts Read data of posts
+        @apiVersion 0.0.1
+        @apiName GetPosts
+        @apiGroup Post
+        @apiPermission login
 
-        :return List of posts (instance of flask.wrappers.Response)
+        @apiDescription 该<code>API</code>支持分页
+
+        @apiSuccess {Object[]} result               List of posts.
+        @apiSuccess {Number}   id                   Post id.
+        @apiSuccess {String}   created_at           Post create time.
+        @apiSuccess {String}   updated_at           Post update time.
+        @apiSuccess {String}   title                Post tile.
+        @apiSuccess {String}   sub                  Post sub title.
+        @apiSuccess {String}   author               Post author name.
+        @apiSuccess {String}   content              Post content list.
+        @apiSuccess {Object[]} comments             Comment List
+        @apiSuccess {String}   comments.comment     Comment String.
+        @apiSuccess {String}   comments.created_at  Comment create time.
+        @apiSuccess {String}   comments.updated_at  Comment update time.
+
+        @apiError NotAuthenticated  Need login before access this api
+
+        @apiErrorExample Response (example):
+        HTTP/1.1 401 Not Authenticated
+        {
+          "code": 401,
+          "success": false,
+          "result": "NoAccessRight"
+        }
         """
 
-        posts = Post.all_with_acl().filter(
+        query = Post.all_with_acl().filter(
             not_(Post.Status.status == 'deleted'),
             Post.Status.parent).order_by(Post.updated_at.desc())
-        paginated_result = posts.paginate(1, 10, False)
-        meta = {
-            'next': paginated_result.next_num,
-            'previous': paginated_result.prev_num,
-            'offset': paginated_result.page,
-            'limit': paginated_result.per_page
-        }
-        if not paginated_result.has_prev:
-            meta['previous'] = None
-        if not paginated_result.has_next:
-            meta['next'] = None
-        result = self.to_json(paginated_result.items, meta=meta)
+
+        paginated_result, pager = Pager.paginate(query)
+        result = self.to_json(paginated_result.items, meta=pager.args)
         return result
 
     @login_required
     def post(self):
         """Handles POST request to the resource.
 
-        :return A post in JSON (instance of flask.wrappers.Response)
+        :return post created in JSON (instance of flask.wrappers.Response)
         """
         pass
 
@@ -155,12 +140,18 @@ class ApiVersionResource(Resource):
 
     @staticmethod
     def get():
-        """Handles GET request to api version.
+        """
+        @api {get} /version Get app information
+        @apiVersion 0.0.1
+        @apiName GetVersion
+        @apiGroup Common
+        @apiPermission none
 
-        :return Api version in JSON
+        @apiSuccess {Object}  result     Response result.
+        @apiSuccess {String}  version    Current api version.
         """
         response = jsonify({
-            'api_version': 'v1'
+            'version': 'v1'
         })
         response.status_code = HTTP_STATUS_CODE_OK
         return response

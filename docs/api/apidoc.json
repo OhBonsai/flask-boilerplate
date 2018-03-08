@@ -1,0 +1,10 @@
+{
+  "name": "api",
+  "version": "0.0.1",
+  "description": "doc for api",
+  "title": "这是一个文档",
+  "header": {
+    "title": "My own header title",
+    "filename": "header.md"
+  }
+}
