@@ -56,5 +56,14 @@ def create_http_app(*args, **kwargs):
         .add_celery()
 
 
+def create_api_app(*args, **kwargs):
+    from app.api.v1 import register_api
+
+    app = create_http_app('app.api', *args, **kwargs)
+    app.add_cache()
+    register_api(app)
+    return app
+
+
 def create_celery_app():
     pass

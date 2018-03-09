@@ -4,7 +4,7 @@
 
 class Logger(object):
 
-    def init_app(self):
+    def init_app(self, app):
         pass
 
 

@@ -1,6 +1,6 @@
 marshmallow
 sqlalchemy
-#flask-bcrypt==0.7.1
+flask-bcrypt==0.7.1
 flask-login==0.4.0
 flask-migrate==2.1.1
 flask-restful==0.3.6
@@ -10,5 +10,5 @@ flask-testing==0.6.2
 flask-wtf==0.14.2
 flask==0.12.2
 webargs==1.2.0
-Flask-Cache==0.12
+Flask-Cache==0.13.1
 raven[flask]==5.27.1

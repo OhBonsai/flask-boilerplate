@@ -9,4 +9,5 @@ doc:
 	cd docs/api/ && apidoc -i ../../app/api -o html/
 
 clean:
-	rm -r ./docs/api/html
+	rm -rf ./docs/api/html
+	rm -f database.db
