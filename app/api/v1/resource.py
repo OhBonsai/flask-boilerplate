@@ -32,6 +32,7 @@ from app.models import (
 )
 from app.models.blog import Post
 from app.schema.schema import PostSchema
+from app.api.cache import cache
 
 
 class ResourceMixin(object):
@@ -42,7 +43,7 @@ class ResourceMixin(object):
         'post': PostSchema,
     }
 
-    def to_json(self, instance, schema, meta=None, status_code=HTTP_STATUS_CODE_OK):
+    def to_json(self, instance, schema=None, meta=None, status_code=HTTP_STATUS_CODE_OK):
         """Create json response from a database models.
 
         :param instance: Instance of a database model
@@ -83,6 +84,7 @@ class PostListResource(ResourceMixin, Resource):
     def __init__(self):
         super(PostListResource, self).__init__()
 
+    @cache.memoize(timeout=(60 * 60))
     @login_required
     def get(self):
         """
@@ -122,8 +124,8 @@ class PostListResource(ResourceMixin, Resource):
             not_(Post.Status.status == 'deleted'),
             Post.Status.parent).order_by(Post.updated_at.desc())
 
-        paginated_result, pager = Pager.paginate(query)
-        result = self.to_json(paginated_result.items, meta=pager.args)
+        instances, pager = Pager.paginate(query)
+        result = self.to_json(instances, meta=pager.args)
         return result
 
     @login_required

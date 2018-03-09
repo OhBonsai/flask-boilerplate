@@ -1,23 +1,25 @@
 # coding=utf-8
 # Created by OhBonsai at 2018/3/7
-"""Entry point for the application"""
+from app.app import (
+    create_app,
+    create_http_app
+)
 
-from flask import Flask
-from flask_login import LoginManager
-from flask_migrate import Migrate
-from flask_restful import Api
-from flask_wtf import CSRFProtect
+from app.__about__ import (
+    __title__,
+    __summary__,
+    __uri__,
+    __version__,
+    __author__,
+    __email__,
+    __license__
+)
 
+application = create_app()
 
-def register_something():
-    pass
-
-
-def create_app():
-    app = Flask(__name__)
-    return app
-
-
-def create_celery_app():
-    return None
-
+# from app.models import db_session
+#
+# @application.teardown_appcontext
+# def shutdown_session(exception=None):
+#     """Remove the database session after every request or app shutdown"""
+#     db_session.remove()

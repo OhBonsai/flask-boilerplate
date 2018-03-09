@@ -142,6 +142,3 @@ class BaseModel(object):
             db_session.add(instance)
             db_session.commit()
         return instance
-
-
-

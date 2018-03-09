@@ -11,3 +11,4 @@ flask-wtf==0.14.2
 flask==0.12.2
 webargs==1.2.0
 Flask-Cache==0.12
+raven[flask]==5.27.1
