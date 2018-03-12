@@ -21,10 +21,6 @@ from sqlalchemy import (
     not_
 )
 
-from app.core.error import (
-    InstanceNotFound,
-    NoPermission
-)
 from app.core.define import HTTP_STATUS_CODE_OK
 from app.models import (
     db_session,
@@ -124,8 +120,8 @@ class PostListResource(ResourceMixin, Resource):
             not_(Post.Status.status == 'deleted'),
             Post.Status.parent).order_by(Post.updated_at.desc())
 
-        instances, pager = Pager.paginate(query)
-        result = self.to_json(instances, meta=pager.args)
+        paginate_query, pager = Pager.paginate(query)
+        result = self.to_json(paginate_query.all(), meta=pager.args)
         return result
 
     @login_required

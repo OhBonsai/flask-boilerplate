@@ -9,3 +9,7 @@
 
 # Auto Generate Doc
 docs/api/html
+
+
+# Local file
+test_dev.py

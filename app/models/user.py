@@ -67,6 +67,15 @@ class User(UserMixin, BaseModel):
     def check_password(self, plaintext):
         return check_password_hash(self.password, plaintext)
 
+    def is_active(self):
+        return True
+
+    def is_authenticated(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
 
 class Group(TagMixin, StatusMixin, BaseModel):
     """Implements the Group model."""

@@ -27,6 +27,11 @@ class App(Flask):
         init_db()
         return self
 
+    def add_login(self):
+        from app.api.login import login_manager
+        login_manager.init_app(self)
+        return self
+
     def add_cache(self):
         from app.api.cache import cache
         cache.init_app(self)
@@ -49,6 +54,7 @@ class App(Flask):
 def create_app(*args, **kwargs):
     return App(*args, **kwargs)\
         .add_sqlalchemy()\
+        .add_login()\
         .add_tracer()
 
 

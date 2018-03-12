@@ -21,10 +21,7 @@ from sqlalchemy.ext.declarative import (
     declared_attr
 )
 
-from app.core.error import (
-    InstanceNotFound,
-    NoPermission
-)
+from app.api.errors import NoPermission
 
 engine = None
 session_maker = sessionmaker()
@@ -66,10 +63,10 @@ class AclBaseQuery(BaseQuery):
 
         obj = self.get(model_id)
         if not obj:
-            raise InstanceNotFound
+            raise LookupError
         try:
             if obj.get_status.status == 'deleted':
-                raise InstanceNotFound
+                raise LookupError
         except AttributeError:
             # It doesn't matter when model hadn't status field
             pass

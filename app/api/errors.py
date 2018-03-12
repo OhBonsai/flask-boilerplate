@@ -4,11 +4,17 @@
 from werkzeug.exceptions import HTTPException, InternalServerError
 from flask import jsonify
 import logging
+from marshmallow import ValidationError
+
 
 exception_logger = logging.getLogger('exception_logger')
 
 
-def register(app):
+class NoPermission(Exception):
+    pass
+
+
+def register_error_handler(app):
     """
     Register error handlers on the given app
 
@@ -48,9 +54,24 @@ def register(app):
     @app.errorhandler(TypeError)
     @app.errorhandler(ValueError)
     def raise_bad_request(e):
-        return jsonify(message=e.message), 400
+        return jsonify(message=e.args), 400
 
     @app.errorhandler(LookupError)
     def raise_not_found(e):
-        exception_logger.info(e.message)
-        return jsonify(message=e.message), 404
+        exception_logger.exception(e)
+        return jsonify(message=e.args[0]), 404
+
+    @app.errorhandler(AttributeError)
+    def raise_some_server_error(e):
+        exception_logger.exception(*e.args)
+        return jsonify(message=e.args[0])
+
+    @app.errorhandler(NoPermission)
+    def raise_no_permission(e):
+        exception_logger.exception(*e.args)
+        return jsonify(message=e.args[0])
+
+    @app.errorhandler(ValidationError)
+    def raise_request_validate_error(e):
+        exception_logger.exception(*e.args)
+        return jsonify(message=e.args)

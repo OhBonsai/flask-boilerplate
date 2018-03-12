@@ -4,9 +4,7 @@
 
 from marshmallow import Schema as _Schema
 from marshmallow.fields import String as _String
-from marshmallow.validate import Validator
-
-from app.core.error import ValidationError
+from marshmallow.validate import Validator, ValidationError
 
 
 class String(_String):

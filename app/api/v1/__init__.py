@@ -6,6 +6,7 @@ from flask import Blueprint
 from flask_restful import Api
 from app.api.cors import cors
 from .route import API_ROUTES
+from app.api.errors import register_error_handler
 
 
 def register_api(app):
@@ -19,6 +20,8 @@ def register_api(app):
         pass
 
     cors.init_app(app)
+    register_error_handler(app)
+
     api_v1_bp = Blueprint('api_v1', __name__)
     api_v1 = Api(api_v1_bp, prefix='/api/v1')
     for r in API_ROUTES:
