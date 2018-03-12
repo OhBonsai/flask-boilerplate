@@ -21,6 +21,8 @@ class App(Flask):
             pass
 
     def add_sqlalchemy(self):
+        from app.models.user import User, Group
+        from app.models.blog import Post
         configure_engine(self.config['SQLALCHEMY_DATABASE_URI'])
         init_db()
         return self

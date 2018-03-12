@@ -3,7 +3,7 @@
 """API V1 Blueprint"""
 
 from flask import Blueprint
-from app.core.error import WithErrorHandlerApi
+from flask_restful import Api
 from app.api.cors import cors
 from .route import API_ROUTES
 
@@ -20,8 +20,8 @@ def register_api(app):
 
     cors.init_app(app)
     api_v1_bp = Blueprint('api_v1', __name__)
-    api_v1 = WithErrorHandlerApi(api_v1_bp, prefix='/api/v1')
+    api_v1 = Api(api_v1_bp, prefix='/api/v1')
     for r in API_ROUTES:
         api_v1.add_resource(*r)
 
-    app.register_blueprint(api_v1)
+    app.register_blueprint(api_v1_bp)
