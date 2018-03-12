@@ -29,6 +29,7 @@ from app.models import (
 from app.models.blog import Post
 from app.schema.schema import PostSchema
 from app.api.cache import cache
+from app.api.errors import InvalidRequest, NoPermission
 
 
 class ResourceMixin(object):
@@ -53,7 +54,7 @@ class ResourceMixin(object):
         if not meta:
             meta = dict()
 
-        result = {'status': status_code, 'success': False, 'result': None, 'meta': meta}
+        result = {'status': status_code, 'success': False, 'result': None}
 
         if instance:
             if not schema:
@@ -63,13 +64,33 @@ class ResourceMixin(object):
                     # if instance is list object
                     schema = self.schema_registry[instance[0].__tablename__](many=True)
 
-            schema['result'] = schema.dump(instance)
-            schema['success'] = True
+            result['result'] = schema.dump(instance).data
+            result['success'] = True
+
+        if meta:
+            result['meta'] = meta
 
         response = jsonify(result)
         # Axios can't capture other status_code except 200 :(
         response.status_code = 200
         return response
+
+
+class PostDetailResource(ResourceMixin, Resource):
+
+    @login_required
+    def delete(self, pk):
+        post = Post.all_with_acl().filter(
+            not_(Post.Status.status == 'deleted'),
+            Post.Status.parent,
+            Post.id == pk).order_by(Post.updated_at.desc()).first()
+
+        if post:
+            db_session.delete(post)
+            db_session.commit()
+            return jsonify("delete success")
+
+        raise NoPermission("can't delete post with out permission")
 
 
 class PostListResource(ResourceMixin, Resource):
@@ -128,9 +149,21 @@ class PostListResource(ResourceMixin, Resource):
     def post(self):
         """Handles POST request to the resource.
 
-        :return post created in JSON (instance of flask.wrappers.Response)
+        Returns:
+            A sketch in JSON (instance of flask.wrappers.Response)
         """
-        pass
+        json = request.get_json()
+        if json is None:
+            raise InvalidRequest("can't load your json request")
+
+        # don't need catch ValidationError. auto return json response in error handler
+        data = PostSchema().load(json).data
+        post = Post(**data, user=current_user)
+        post.status.append(post.Status(user=current_user, status='new'))
+        post.grant_all_permission(user=current_user)
+        db_session.add(post)
+        db_session.commit()
+        return self.to_json(post)
 
 
 class ApiVersionResource(Resource):

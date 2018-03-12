@@ -97,18 +97,6 @@ class StatusMixin(object):
         return relationship(self.Status)
 
 
-class CommentMixin(object):
-    @declared_attr
-    def status(self):
-        self.Comment = type(
-            '{}Comment'.format(self.__name__),
-            (Tag, BaseModel),
-            dict(
-                __tablename__='{0:s}_comment'.format(self.__tablename__),
-                parent_id=Column(Integer, ForeignKey('{0:s}.id'.format(self.__tablename__))),
-                    parent=relationship(self)))
-        return relationship(self.Comment)
-
     def set_status(self, status):
         """
         Set status on object. Although this is a many-to-many relationship
@@ -131,4 +119,18 @@ class CommentMixin(object):
         if not self.status:
             self.status.append(self.Status(user=None, status=u'new'))
         return self.status[0]
+
+
+class CommentMixin(object):
+
+    @declared_attr
+    def comment(self):
+        self.Comment = type(
+            '{}Comment'.format(self.__name__),
+            (Tag, BaseModel),
+            dict(
+                __tablename__='{0:s}_comment'.format(self.__tablename__),
+                parent_id=Column(Integer, ForeignKey('{0:s}.id'.format(self.__tablename__))),
+                    parent=relationship(self)))
+        return relationship(self.Comment)
 

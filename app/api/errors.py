@@ -14,6 +14,10 @@ class NoPermission(Exception):
     pass
 
 
+class InvalidRequest(Exception):
+    pass
+
+
 def register_error_handler(app):
     """
     Register error handlers on the given app
@@ -37,6 +41,7 @@ def register_error_handler(app):
         else:
             message = e.description
 
+        exception_logger.exception(e)
         return jsonify(message=message), e.code
 
     @app.errorhandler(422)
@@ -54,6 +59,7 @@ def register_error_handler(app):
     @app.errorhandler(TypeError)
     @app.errorhandler(ValueError)
     def raise_bad_request(e):
+        exception_logger.exception(e)
         return jsonify(message=e.args), 400
 
     @app.errorhandler(LookupError)
@@ -72,6 +78,11 @@ def register_error_handler(app):
         return jsonify(message=e.args[0])
 
     @app.errorhandler(ValidationError)
+    def raise_request_validate_error(e):
+        exception_logger.exception(*e.args)
+        return jsonify(message=e.args)
+
+    @app.errorhandler(InvalidRequest)
     def raise_request_validate_error(e):
         exception_logger.exception(*e.args)
         return jsonify(message=e.args)

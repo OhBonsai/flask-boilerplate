@@ -50,6 +50,6 @@ class PostSchema(Schema):
     sub = String(required=True, strip=True, validate=Length(max=128))
     content = String(required=True, validate=NotEmpty())
 
-    comments = Nested(CommentSchema, only=('created_at', 'comment', 'updated_at'), many=True)
-    # status = Nested(StatusSchema, only=('created_at', 'comment'), many=True)
+    status = Nested(StatusSchema, only=('created_at', 'status'), many=True)
+    comments = Nested(CommentSchema, many=True)
 

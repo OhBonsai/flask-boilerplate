@@ -4,11 +4,13 @@
 
 from .resource import (
     PostListResource,
-    ApiVersionResource
+    ApiVersionResource,
+    PostDetailResource
 )
 
 
 API_ROUTES = [
     (PostListResource, '/posts'),
+    (PostDetailResource, '/post/<pk>'),
     (ApiVersionResource, '/version')
 ]

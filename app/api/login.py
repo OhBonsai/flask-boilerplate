@@ -65,7 +65,7 @@ def load_user(user_id):
     #     return current_user
     if request.authorization is not None and request.authorization.get('username') is not None:
         c_user = User.query.filter_by(username=request.authorization['username']).first()
-        if c_user.check_password(request.authorization['password']):
+        if c_user is not None and c_user.check_password(request.authorization['password']):
             login_user(c_user, remember=True)
             return c_user
 

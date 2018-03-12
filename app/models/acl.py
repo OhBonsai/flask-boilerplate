@@ -177,6 +177,16 @@ class AccessControlMixin(object):
             self.acl.append(self.AccessControlEntry(permission=permission, user=user))
             db_session.commit()
 
+    def grant_all_permission(self, user=None, group=None):
+        """ Grant write delete read permission to a user or group
+
+        :param user: User instance
+        :param group: Group instance
+        """
+        self.grant_permission("read", user, group)
+        self.grant_permission("write", user, group)
+        self.grant_permission("delete", user, group)
+
     def revoke_permission(self, permission, user=None, group=None):
         """Revoke permission for user/group.
 
