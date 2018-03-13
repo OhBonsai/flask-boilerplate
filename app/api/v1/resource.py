@@ -23,7 +23,7 @@ from sqlalchemy import (
 
 from app.core.define import HTTP_STATUS_CODE_OK
 from app.models import (
-    db_session,
+    db,
     Pager
 )
 from app.models.blog import Post
@@ -86,8 +86,8 @@ class PostDetailResource(ResourceMixin, Resource):
             Post.id == pk).order_by(Post.updated_at.desc()).first()
 
         if post:
-            db_session.delete(post)
-            db_session.commit()
+            db.session.delete(post)
+            db.session.commit()
             return jsonify("delete success")
 
         raise NoPermission("can't delete post with out permission")
@@ -161,8 +161,8 @@ class PostListResource(ResourceMixin, Resource):
         post = Post(**data, user=current_user)
         post.status.append(post.Status(user=current_user, status='new'))
         post.grant_all_permission(user=current_user)
-        db_session.add(post)
-        db_session.commit()
+        db.session.add(post)
+        db.session.commit()
         return self.to_json(post)
 
 

@@ -1,38 +1,20 @@
 """This module implements the models for the Blog core system."""
 
-
-import json
-
-from sqlalchemy.types import (
-    Boolean,
-    String,
-    Text
-)
-from sqlalchemy import (
-    Column,
-    PrimaryKeyConstraint,
-    ForeignKey,
-    Integer,
-    Table
-)
-from sqlalchemy.orm import relationship
-
-
-from app.models import BaseModel
 from app.models.acl import AccessControlMixin
 from app.models.patch import CommentMixin
 from app.models.patch import StatusMixin
+from app.models import db
 
 
-class Post(AccessControlMixin, StatusMixin, CommentMixin, BaseModel):
+class Post(AccessControlMixin, StatusMixin, CommentMixin, db.Model):
     """Implements the Post model.
     """
 
-    title = Column(String(32))
-    sub = Column(String(128))
-    user_id = Column(Integer, ForeignKey(u'user.id'))
-    user = relationship('User', backref='posts', lazy='select')
-    content = Column(Text())
+    title = db.Column(db.String(32))
+    sub = db.Column(db.String(128))
+    user_id = db.Column(db.Integer, db.ForeignKey(u'user.id'))
+    user = db.relationship('User', backref='posts', lazy='select')
+    content = db.Column(db.Text())
 
     def __init__(self, title, sub, user, content):
         """Initialize the Sketch object.
@@ -41,7 +23,7 @@ class Post(AccessControlMixin, StatusMixin, CommentMixin, BaseModel):
         :param title: The title of the post
         :param sub: The subtitle of the post
         :param user: A user
-        :param content: Content String
+        :param content: Content db.String
         """
         super(Post, self).__init__()
         self.title = title

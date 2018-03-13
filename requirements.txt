@@ -1,3 +1,4 @@
+pytest
 marshmallow
 sqlalchemy
 flask-bcrypt==0.7.1

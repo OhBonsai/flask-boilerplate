@@ -3,52 +3,16 @@
 """This package handles setting up and providing the database connection."""
 
 from flask_login import current_user
-from flask_sqlalchemy import BaseQuery
+from flask_sqlalchemy import BaseQuery, SQLAlchemy, Model
 from flask_restful import reqparse
 from sqlalchemy import (
-    create_engine,
     Column,
     DateTime,
     func,
     Integer
 )
-from sqlalchemy.orm import (
-    scoped_session,
-    sessionmaker
-)
-from sqlalchemy.ext.declarative import (
-    as_declarative,
-    declared_attr
-)
-
+from sqlalchemy.ext.declarative import declared_attr
 from app.api.errors import NoPermission
-
-engine = None
-session_maker = sessionmaker()
-db_session = scoped_session(session_maker)
-
-
-def configure_engine(uri):
-    """configure and setup the database session"""
-
-    global engine, session_maker, db_session
-    engine = create_engine(uri)
-    db_session.remove()
-    session_maker.configure(autocommit=False, autoflush=False, bind=engine, query_cls=AclBaseQuery)
-
-
-def init_db():
-    """Init db based on models implement BaseModel. It will setup db on the first run"""
-
-    BaseModel.metadata.create_all(bind=engine)
-    # base model query is AclBaseQuery
-    BaseModel.query = db_session.query_property()
-    return BaseModel
-
-
-def drop_all():
-    """Drop all table"""
-    BaseModel.metadata.drop_all(bind=engine)
 
 
 class AclBaseQuery(BaseQuery):
@@ -111,8 +75,7 @@ class Pager(object):
         }
 
 
-@as_declarative()
-class BaseModel(object):
+class BaseModel(Model):
     """Base class of models, It adds common models which are `id`, `created_at`, `updated_at`
     And provide common method  `get_or_create`
     """
@@ -136,6 +99,27 @@ class BaseModel(object):
         instance = cls.query.filter_by(**kwargs).first()
         if not instance:
             instance = cls(**kwargs)
-            db_session.add(instance)
-            db_session.commit()
+            db.session.add(instance)
+            db.session.commit()
         return instance
+
+    @classmethod
+    def get(cls, id):
+        return cls.query().get(id)
+
+    @classmethod
+    def exists(cls, **kw):
+        return cls.query(**kw).first() is not None
+
+    def apply_kwargs(self, kwargs):
+        for key, value in kwargs.iteritems():
+            setattr(self, key, value)
+
+        return self
+
+db = SQLAlchemy(model_class=BaseModel,
+                query_class=AclBaseQuery,
+                session_options=dict(expire_on_commit=False))
+
+from .user import User, Group
+from .blog import Post

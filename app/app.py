@@ -6,7 +6,8 @@ import os
 import config
 
 from flask import Flask
-from app.models import configure_engine, init_db
+from flask_migrate import Migrate
+from app.models import db
 
 
 class App(Flask):
@@ -21,10 +22,9 @@ class App(Flask):
             pass
 
     def add_sqlalchemy(self):
-        from app.models.user import User, Group
-        from app.models.blog import Post
-        configure_engine(self.config['SQLALCHEMY_DATABASE_URI'])
-        init_db()
+        db.init_app(self)
+        migrate = Migrate()
+        migrate.init_app(self, db)
         return self
 
     def add_login(self):

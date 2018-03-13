@@ -7,47 +7,29 @@ from flask_bcrypt import (
     check_password_hash
 )
 from flask_login import UserMixin
-from sqlalchemy.types import (
-    Boolean,
-    String,
-    Text
-)
-from sqlalchemy import (
-    Column,
-    PrimaryKeyConstraint,
-    ForeignKey,
-    Integer,
-    Table
-)
-from sqlalchemy.orm import (
-    backref,
-    relationship
-)
-
-from app.models import BaseModel
 from app.models.patch import (
     TagMixin,
     StatusMixin
 )
+from app.models import db
+
+# User Group m2m db.relationship db.Table
+user_group = db.Table('user_group', db.metadata,
+                      db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+                      db.Column('group_id', db.Integer(), db.ForeignKey('group.id')),
+                      db.PrimaryKeyConstraint('user_id', 'group_id'))
 
 
-# User Group m2m relationship table
-user_group = Table('user_group', BaseModel.metadata,
-                   Column('user_id', Integer(), ForeignKey('user.id')),
-                   Column('group_id', Integer(), ForeignKey('group.id')),
-                   PrimaryKeyConstraint('user_id', 'group_id'))
-
-
-class User(UserMixin, BaseModel):
+class User(UserMixin, db.Model):
     """Implements the User model."""
 
-    username = Column(String(32), unique=True)
-    password = Column(String(32))
-    chinese_name = Column(String(32))
-    email = Column(String(32))
-    active = Column(Boolean(), default=True)
-    my_groups = relationship('Group', backref='user', lazy='dynamic')
-    groups = relationship('Group', secondary=user_group, backref=backref('users', lazy='dynamic'))
+    username = db.Column(db.String(32), unique=True)
+    password = db.Column(db.String(32))
+    chinese_name = db.Column(db.String(32))
+    email = db.Column(db.String(32))
+    active = db.Column(db.Boolean(), default=True)
+    my_groups = db.relationship('Group', backref='user', lazy='dynamic')
+    groups = db.relationship('Group', secondary=user_group, backref=db.backref('users', lazy='dynamic'))
 
     def __init__(self, username, name=None):
         """
@@ -77,13 +59,13 @@ class User(UserMixin, BaseModel):
         return False
 
 
-class Group(TagMixin, StatusMixin, BaseModel):
+class Group(TagMixin, StatusMixin, db.Model):
     """Implements the Group model."""
 
-    name = Column(String(32), unique=True)
-    display_name = Column(String(64))
-    description = Column(Text())
-    user_id = Column(Integer, ForeignKey(u'user.id'))
+    name = db.Column(db.String(32), unique=True)
+    display_name = db.Column(db.String(64))
+    description = db.Column(db.Text())
+    user_id = db.Column(db.Integer, db.ForeignKey(u'user.id'))
 
     def __init__(self, name, display_name=None, description=None, user=None):
         super(Group, self).__init__()

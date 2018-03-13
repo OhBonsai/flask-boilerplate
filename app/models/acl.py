@@ -6,21 +6,13 @@ Two role relate with permission : "user", "group"
 
 from flask_login import current_user
 from sqlalchemy import (
-    Column,
-    ForeignKey,
-    Integer,
     and_,
     or_,
     not_
 )
-from sqlalchemy.types import String
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import relationship
 
-from app.models import (
-    BaseModel,
-    db_session
-)
+from app.models import db
 
 
 class AccessControlEntry(object):
@@ -29,22 +21,22 @@ class AccessControlEntry(object):
 
     @declared_attr
     def user_id(self):
-        return Column(Integer, ForeignKey('user.id'))
+        return db.Column(db.Integer, db.ForeignKey('user.id'))
 
     @declared_attr
     def user(self):
-        return relationship('User')
+        return db.relationship('User')
 
     @declared_attr
     def group_id(self):
-        return Column(Integer, ForeignKey('group.id'))
+        return db.Column(db.Integer, db.ForeignKey('group.id'))
 
     @declared_attr
     def group(self):
-        return relationship('Group')
+        return db.relationship('Group')
 
     # Permission (read, write, delete)
-    permission = Column(String(16))
+    permission = db.Column(db.String(16))
 
 
 class AccessControlMixin(object):
@@ -59,14 +51,14 @@ class AccessControlMixin(object):
 
         self.AccessControlEntry = type(
             '{}sAccessControlEntry'.format(self.__name__),
-            (AccessControlEntry, BaseModel),
+            (AccessControlEntry, db.Model),
             dict(
                 __tablename__='{}_ace'.format(self.__tablename__),
-                parent_id=Column(Integer, ForeignKey('{}.id'.format(self.__tablename__))),
-                parent=relationship(self)
+                parent_id=db.Column(db.Integer, db.ForeignKey('{}.id'.format(self.__tablename__))),
+                parent=db.relationship(self)
             )
         )
-        return relationship(self.AccessControlEntry)
+        return db.relationship(self.AccessControlEntry)
 
     @classmethod
     def all_with_acl(cls, user=None):
@@ -88,11 +80,10 @@ class AccessControlMixin(object):
                 ])), cls.AccessControlEntry.permission == u'read',
             cls.AccessControlEntry.parent)
 
-
     def _get_ace(self, permission, user=None, group=None, check_group=True):
         """Get the specific access control entry for the user and permission.
 
-        :param permission: String (read, write, delete)
+        :param permission: db.String (read, write, delete)
         :param user: app.models.user.User instance
         :param group: app.models.user.Group instance
         :param check_group: Does check group permission, default is True
@@ -170,12 +161,12 @@ class AccessControlMixin(object):
         """
         if group and not self._get_ace(permission, group=group):
             self.acl.append(self.AccessControlEntry(permission=permission, group=group))
-            db_session.commit()
+            db.session.commit()
             return
 
         if not self._get_ace(permission, user=user, check_group=False):
             self.acl.append(self.AccessControlEntry(permission=permission, user=user))
-            db_session.commit()
+            db.session.commit()
 
     def grant_all_permission(self, user=None, group=None):
         """ Grant write delete read permission to a user or group
@@ -200,11 +191,11 @@ class AccessControlMixin(object):
             if group_ace:
                 for ace in group_ace:
                     self.acl.remove(ace)
-                db_session.commit()
+                db.session.commit()
             return
 
         user_ace = self._get_ace(permission=permission, user=user)
         if user_ace:
             for ace in user_ace:
                 self.acl.remove(ace)
-            db_session.commit()
+            db.session.commit()

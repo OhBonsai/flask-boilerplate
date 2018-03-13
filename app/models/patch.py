@@ -1,20 +1,7 @@
 # coding=utf-8
 # Created by OhBonsai at 2018/3/7
-from sqlalchemy import (
-    Column,
-    ForeignKey,
-    Integer
-)
-
-from sqlalchemy.types import String
-
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import relationship
-
-from app.models import (
-    BaseModel,
-    db_session
-)
+from app.models import db
 
 
 class BasePatch(object):
@@ -22,15 +9,15 @@ class BasePatch(object):
 
     @declared_attr
     def user_id(self):
-        return Column(Integer, ForeignKey('user.id'))
+        return db.Column(db.Integer, db.ForeignKey('user.id'))
 
     @declared_attr
     def user(self):
-        return relationship('User')
+        return db.relationship('User')
 
 
 class Tag(BasePatch):
-    tag = Column(String(16))
+    tag = db.Column(db.String(16))
 
     def __init__(self, user, tag):
         """
@@ -43,12 +30,12 @@ class Tag(BasePatch):
 
 
 class Comment(BasePatch):
-    comment = Column(String(1024))
+    comment = db.Column(db.String(1024))
 
     def __init__(self, user, comment):
         """
         :param user: User instance
-        :param comment: comment string
+        :param comment: comment db.String
         """
         super(Comment, self).__init__()
         self.user = user
@@ -58,12 +45,12 @@ class Comment(BasePatch):
 class Status(BasePatch):
     """There are some built-in Value: "deleted", "new"
     """
-    status = Column(String(16))
+    status = db.Column(db.String(16))
 
     def __init__(self, user, status):
         """
         :param user: User instance
-        :param status: The type of status (string, e,g. created)
+        :param status: The type of status (db.String, e,g. created)
         """
         super(Status, self).__init__()
         self.user = user
@@ -75,31 +62,31 @@ class TagMixin(object):
     @declared_attr
     def tags(self):
         self.Tag = type(
-            '{}Label'.format(self.__name__),
-            (Tag, BaseModel),
+            '{}_Label'.format(self.__name__),
+            (Tag, db.Model),
             dict(
                 __tablename__='{0:s}_tag'.format(self.__tablename__),
-                parent_id=Column(Integer, ForeignKey('{0:s}.id'.format(self.__tablename__))),
-                parent=relationship(self)))
-        return relationship(self.Tag)
+                parent_id=db.Column(db.Integer, db.ForeignKey('{0:s}.id'.format(self.__tablename__))),
+                parent=db.relationship(self)))
+        return db.relationship(self.Tag)
 
 
 class StatusMixin(object):
     @declared_attr
     def status(self):
         self.Status = type(
-            '{}Status'.format(self.__name__),
-            (Status, BaseModel),
+            '{}_Status'.format(self.__name__),
+            (Status, db.Model),
             dict(
                 __tablename__='{0:s}_status'.format(self.__tablename__),
-                parent_id=Column(Integer, ForeignKey('{0:s}.id'.format(self.__tablename__))),
-                parent=relationship(self)))
-        return relationship(self.Status)
+                parent_id=db.Column(db.Integer, db.ForeignKey('{0:s}.id'.format(self.__tablename__))),
+                parent=db.relationship(self)))
+        return db.relationship(self.Status)
 
 
     def set_status(self, status):
         """
-        Set status on object. Although this is a many-to-many relationship
+        Set status on object. Although this is a many-to-many db.relationship
         this makes sure that the parent object only has one status set.
 
         :param status: Name of the status
@@ -107,14 +94,14 @@ class StatusMixin(object):
         for _status in self.status:
             self.status.remove(_status)
         self.status.append(self.Status(user=None, status=status))
-        db_session.commit()
+        db.session.commit()
 
     @property
     def get_status(self):
         """Get the current status.
 
 
-        :return The status as a string
+        :return The status as a db.String
         """
         if not self.status:
             self.status.append(self.Status(user=None, status=u'new'))
@@ -126,11 +113,11 @@ class CommentMixin(object):
     @declared_attr
     def comment(self):
         self.Comment = type(
-            '{}Comment'.format(self.__name__),
-            (Tag, BaseModel),
+            '{}_Comment'.format(self.__name__),
+            (Tag, db.Model),
             dict(
                 __tablename__='{0:s}_comment'.format(self.__tablename__),
-                parent_id=Column(Integer, ForeignKey('{0:s}.id'.format(self.__tablename__))),
-                    parent=relationship(self)))
-        return relationship(self.Comment)
+                parent_id=db.Column(db.Integer, db.ForeignKey('{0:s}.id'.format(self.__tablename__))),
+                    parent=db.relationship(self)))
+        return db.relationship(self.Comment)
 
