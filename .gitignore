@@ -13,3 +13,6 @@ docs/api/html
 
 # Local file
 test_dev.py
+
+# Migrations file
+migrations

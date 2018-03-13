@@ -4,7 +4,6 @@ import sys
 
 from flask_script import Manager, prompt_bool
 from flask_migrate import stamp
-from app.app import create_app
 from app.models import db
 
 

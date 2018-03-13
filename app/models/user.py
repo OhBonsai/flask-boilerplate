@@ -27,20 +27,21 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(32))
     chinese_name = db.Column(db.String(32))
     email = db.Column(db.String(32))
+    is_admin = db.Column(db.Boolean, default=False)
     active = db.Column(db.Boolean(), default=True)
     my_groups = db.relationship('Group', backref='user', lazy='dynamic')
     groups = db.relationship('Group', secondary=user_group, backref=db.backref('users', lazy='dynamic'))
 
-    def __init__(self, username, name=None):
+    def __init__(self, username, chinese_name=None):
         """
         :param username: Username for the user
         :param name: Name of the user
         """
         super(User, self).__init__()
         self.username = username
-        self.name = name
-        if not name:
-            self.name = username
+        self.chinese_name = chinese_name
+        if not chinese_name:
+            self.chinese_name = username
 
     def set_password(self, plaintext, rounds=12):
         password_hash = generate_password_hash(plaintext, rounds)
