@@ -54,8 +54,8 @@ class App(Flask):
 def create_app(*args, **kwargs):
     return App(*args, **kwargs)\
         .add_sqlalchemy()\
-        .add_login()\
-        .add_tracer()
+        .add_login()
+        # .add_tracer()
 
 
 def create_http_app(*args, **kwargs):

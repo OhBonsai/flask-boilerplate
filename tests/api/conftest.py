@@ -1,14 +1,15 @@
 # coding=utf-8
 # Created by OhBonsai at 2018/3/13
+import base64
 
 import pytest
 from werkzeug.datastructures import Headers
-
 from flask import Response, json
 from flask.testing import FlaskClient
 
 import config
 from app import create_api_app
+from app.models import User
 
 
 @pytest.fixture(scope="session")
@@ -36,6 +37,19 @@ class ApiClient(FlaskClient):
 
         return super(ApiClient, self).open(*args, **kwargs)
 
+    def get(self, *args, user=None, password=None, **kwargs):
+        if user is not None \
+                and isinstance(user, User) \
+                and password is not None:
+            print('0000000000000000000000000000=HAHAHHAHA')
+            auth = user.username + ":" + password
+            auth = b'Basic '+base64.b64encode(auth.encode('utf-8'))
+            headers = kwargs.pop('header', Headers())
+            headers.set('Authorization', auth)
+            kwargs['headers'] = headers
+
+        return super(ApiClient, self).get(*args, **kwargs)
+
 
 class ApiResponse(Response):
     @property
@@ -44,6 +58,6 @@ class ApiResponse(Response):
 
 
 @pytest.fixture
-def client(app):
-    with app.test_client(use_cookies=False) as client:
+def client(application):
+    with application.test_client(use_cookies=False) as client:
         yield client

@@ -2,6 +2,11 @@
 # Created by OhBonsai at 2018/3/13
 
 
-def add_fixtures(db, *fixtures):
-    db.session.add_all(fixtures)
-    db.session.commit()
+def add_fixture(db_session, fixture):
+    db_session.add(fixture)
+    db_session.commit()
+
+
+def add_fixtures(db_session, *fixtures):
+    db_session.add_all(fixtures)
+    db_session.commit()

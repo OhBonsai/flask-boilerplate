@@ -70,12 +70,12 @@ def load_user(user_id):
             return c_user
 
 
-# @login_manager.request_loader
-# def load_user_from_request(request):
-#     # if current_user and not current_user.is_anonymous:
-#     #     return current_user
-#     if request.authorization is not None and request.authorization.get('username') is not None:
-#         c_user = User.query.filter_by(username=request.authorization['username']).first()
-#         if c_user.check_password(request.authorization['password']):
-#             login_user(c_user, remember=True)
-#             return c_user
+@login_manager.request_loader
+def load_user_from_request(request):
+    # if current_user and not current_user.is_anonymous:
+    #     return current_user
+    if request.authorization is not None and request.authorization.get('username') is not None:
+        c_user = User.query.filter_by(username=request.authorization['username']).first()
+        if c_user.check_password(request.authorization['password']):
+            login_user(c_user, remember=True)
+            return c_user

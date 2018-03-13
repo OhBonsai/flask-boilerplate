@@ -46,7 +46,7 @@ def database(application):
     """
     assert isinstance(application, App)
 
-    setup_db(app)
+    setup_db(application)
     yield db
     teardown_db()
 
@@ -62,7 +62,7 @@ def db_session(database, application):
     """
     assert isinstance(application, App)
 
-    with app.app_context():
+    with application.app_context():
         clean_db()
         yield database.session
         database.session.rollback()
@@ -73,7 +73,7 @@ def test_admin(db_session):
     """
     Creates a test admin
     """
-    user = users.test_admin()
+    user, pwd = users.test_admin()
     db_session.add(user)
     db_session.commit()
     return user
@@ -84,7 +84,7 @@ def test_user(db_session):
     """
     Creates a single test user
     """
-    user = users.test_user()
+    user, pwd = users.test_user()
     db_session.add(user)
     db_session.commit()
     return user

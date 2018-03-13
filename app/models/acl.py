@@ -53,7 +53,7 @@ class AccessControlMixin(object):
             '{}sAccessControlEntry'.format(self.__name__),
             (AccessControlEntry, db.Model),
             dict(
-                __tablename__='{}_ace'.format(self.__tablename__),
+                __tablename__='{}_access_control_entry'.format(self.__tablename__),
                 parent_id=db.Column(db.Integer, db.ForeignKey('{}.id'.format(self.__tablename__))),
                 parent=db.relationship(self)
             )

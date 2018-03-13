@@ -42,11 +42,11 @@ def sketch(**kwargs):
     user.email = "youjiantao@gridsum.com"
     user.set_password("123456")
     user.is_admin = True
-    return user.apply_kwargs(kwargs)
+    return user.apply_kwargs(kwargs), "123456"
 
 
 def lotus(**kwargs):
     user = User(username="sketch")
     user.email = "youjiantao@gridsum.com"
     user.set_password("123456")
-    return user.apply_kwargs(kwargs)
+    return user.apply_kwargs(kwargs), "123456"
