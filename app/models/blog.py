@@ -1,12 +1,11 @@
 """This module implements the models for the Blog core system."""
 
 from app.models.acl import AccessControlMixin
-from app.models.patch import CommentMixin
-from app.models.patch import StatusMixin
+from app.models.patch import CommentMixin, StatusMixin, TagMixin
 from app.models import db
 
 
-class Post(AccessControlMixin, StatusMixin, CommentMixin, db.Model):
+class Post(AccessControlMixin, StatusMixin, CommentMixin, TagMixin, db.Model):
     """Implements the Post model.
     """
 

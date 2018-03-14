@@ -73,5 +73,12 @@ def create_api_app(*args, **kwargs):
     return app
 
 
+def create_no_sqlalchemy_log_api_app(*args, **kwargs):
+    import logging
+    logging.getLogger("sqlalchemy").disabled = True
+    return create_api_app(*args, **kwargs)
+
+
+
 def create_celery_app():
     pass

@@ -1,8 +1,13 @@
-import pytest
+import subprocess
+import argparse
+import time
 
 
-class MyPlugin(object):
-    def pytest_sessionfinish(self):
-        print("*** test run reporting finishing")
+def run_python_tests(coverage=False):
+    try:
+        if coverage:
+            pass
+    finally:
+        pass
 
-pytest.main(['-s', '-v', 'tests'], plugins=[MyPlugin()])
+

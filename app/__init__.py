@@ -3,7 +3,8 @@
 from app.app import (
     create_app,
     create_http_app,
-    create_api_app
+    create_api_app,
+    create_no_sqlalchemy_log_api_app
 )
 
 from app.__about__ import (

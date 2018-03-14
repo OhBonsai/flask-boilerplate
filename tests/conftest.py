@@ -10,7 +10,7 @@ import pytest
 
 import config
 from app.models import db
-from app import create_api_app
+from app import create_no_sqlalchemy_log_api_app
 from app.app import App
 
 from tests import setup_db, teardown_db, clean_db
@@ -33,7 +33,7 @@ def application():
 
     Initialized with testing config file.
     """
-    yield create_api_app(config_file=config.TESTING_CONF_PATH)
+    yield create_no_sqlalchemy_log_api_app(config_file=config.TESTING_CONF_PATH)
 
 
 @pytest.fixture(scope="session")
@@ -73,7 +73,7 @@ def test_admin(db_session):
     """
     Creates a test admin
     """
-    user, pwd = users.test_admin()
+    user, pwd = users.create_admin()
     db_session.add(user)
     db_session.commit()
     return user
@@ -84,7 +84,7 @@ def test_user(db_session):
     """
     Creates a single test user
     """
-    user, pwd = users.test_user()
+    user, pwd = users.create_user()
     db_session.add(user)
     db_session.commit()
     return user
@@ -95,7 +95,7 @@ def test_users(db_session):
     """
     Creates 50 test users
     """
-    _users = users.test_users()
+    _users = users.create_users()
     for user in _users:
         db_session.add(user)
     db_session.commit()

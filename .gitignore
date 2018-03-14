@@ -17,3 +17,7 @@ test_dev.py
 
 # Migrations file
 migrations
+
+## db
+test.db
+database.db

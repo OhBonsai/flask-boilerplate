@@ -21,6 +21,7 @@ class StatusSchema(Schema):
     created_at = DateTime(dump_only=True)
     updated_at = DateTime(dump_only=True)
 
+    author = Function(lambda o: o.user.username)
     status = String(strip=True, validate=Length(max=16))
 
 
@@ -29,6 +30,7 @@ class CommentSchema(Schema):
     created_at = DateTime(dump_only=True)
     updated_at = DateTime(dump_only=True)
 
+    author = Function(lambda o: o.user.username)
     comment = String(strip=True, validate=Length(max=1024))
 
 
@@ -37,6 +39,7 @@ class TagSchema(Schema):
     created_at = DateTime(dump_only=True)
     updated_at = DateTime(dump_only=True)
 
+    author = Function(lambda o: o.user.username)
     tag = String(strip=True, validate=Length(max=16))
 
 
@@ -45,11 +48,12 @@ class PostSchema(Schema):
     created_at = DateTime(dump_only=True)
     updated_at = DateTime(dump_only=True)
 
-    author = Function(lambda o: o.user.name)
+    author = Function(lambda o: o.user.username)
     title = String(required=True, strip=True, validate=[NotEmpty(), Length(min=1, max=32)])
     sub = String(required=True, strip=True, validate=Length(max=128))
     content = String(required=True, validate=NotEmpty())
 
-    status = Nested(StatusSchema, only=('created_at', 'status'), many=True)
-    comments = Nested(CommentSchema, many=True)
+    statuses = Nested(StatusSchema, only=('created_at', 'status'), many=True, dump_only=True)
+    comments = Nested(CommentSchema, many=True, dump_only=True)
+    tags = Nested(StatusSchema, only=('tag', ), many=True, dump_only=True)
 

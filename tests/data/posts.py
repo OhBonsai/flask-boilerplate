@@ -5,7 +5,7 @@ from faker import Faker
 from tests.data.users import sketch
 
 
-def test_posts(user, n=50):
+def create_posts(user, n=50):
     fake = Faker()
     fake.seed(32)
 
@@ -19,3 +19,15 @@ def test_posts(user, n=50):
         )
         posts.append(p)
     return posts
+
+
+def create_post(user):
+    fake = Faker()
+    fake.seed(32)
+
+    return Post(
+        title=fake.name(),
+        sub=fake.address(),
+        user=user,
+        content=fake.text()
+    )

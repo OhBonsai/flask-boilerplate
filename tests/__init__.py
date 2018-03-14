@@ -27,3 +27,12 @@ def clean_db():
     """
     for table in reversed(db.metadata.sorted_tables):
         db.session.execute(table.delete())
+
+
+def check_db_object(expected_result=None, model_cls=None):
+    """
+    Base function for checking Model class
+    """
+    db_obj = model_cls.query.get(1)
+    for k, v in expected_result:
+        assert db_obj.__getattribute__(k) == v

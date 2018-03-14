@@ -4,10 +4,10 @@ from tests.data import add_fixture, add_fixtures, posts, users
 
 
 def test_request_all_my_posts(db_session, client):
-    sketch, pwd = users.sketch()
-    add_fixture(db_session, sketch)
-    post_instances = posts.test_posts(sketch, 10)
+    user, pwd = users.sketch()
+    add_fixture(db_session, user)
+    post_instances = posts.create_posts(user, 10)
     add_fixtures(db_session, *post_instances)
 
-    res = client.get('/api/v1/posts', user=sketch, password=pwd)
+    res = client.get('/api/v1/posts', user=user, password=pwd)
     assert res.status_code == 200

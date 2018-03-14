@@ -10,7 +10,7 @@ BASE_PATH = os.path.realpath(os.path.dirname(__file__))
 SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(os.path.join(BASE_PATH, '..', 'test.db'))
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 # SQLALCHEMY_ECHO = True
-
+SQLALCHEMY_ECHO = False
 
 REMEMBER_COOKIE_DURATION = datetime.timedelta(7)
 

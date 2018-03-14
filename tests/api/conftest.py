@@ -8,7 +8,7 @@ from flask import Response, json
 from flask.testing import FlaskClient
 
 import config
-from app import create_api_app
+from app import create_no_sqlalchemy_log_api_app
 from app.models import User
 
 
@@ -18,7 +18,7 @@ def application():
 
     Initialized once per test-run
     """
-    application = create_api_app(config.TESTING_CONF_PATH)
+    application = create_no_sqlalchemy_log_api_app(config.TESTING_CONF_PATH)
     application.test_client_class = ApiClient
     application.response_class = ApiResponse
     return application
@@ -41,7 +41,6 @@ class ApiClient(FlaskClient):
         if user is not None \
                 and isinstance(user, User) \
                 and password is not None:
-            print('0000000000000000000000000000=HAHAHHAHA')
             auth = user.username + ":" + password
             auth = b'Basic '+base64.b64encode(auth.encode('utf-8'))
             headers = kwargs.pop('header', Headers())

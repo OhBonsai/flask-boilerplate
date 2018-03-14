@@ -39,7 +39,7 @@ class Comment(BasePatch):
         """
         super(Comment, self).__init__()
         self.user = user
-        self.tag = comment
+        self.comment = comment
 
 
 class Status(BasePatch):
@@ -62,7 +62,7 @@ class TagMixin(object):
     @declared_attr
     def tags(self):
         self.Tag = type(
-            '{}_Label'.format(self.__name__),
+            '{}_Tag'.format(self.__name__),
             (Tag, db.Model),
             dict(
                 __tablename__='{0:s}_tag'.format(self.__tablename__),
@@ -73,7 +73,7 @@ class TagMixin(object):
 
 class StatusMixin(object):
     @declared_attr
-    def status(self):
+    def statuses(self):
         self.Status = type(
             '{}_Status'.format(self.__name__),
             (Status, db.Model),
@@ -83,7 +83,6 @@ class StatusMixin(object):
                 parent=db.relationship(self)))
         return db.relationship(self.Status)
 
-
     def set_status(self, status):
         """
         Set status on object. Although this is a many-to-many db.relationship
@@ -91,9 +90,9 @@ class StatusMixin(object):
 
         :param status: Name of the status
         """
-        for _status in self.status:
-            self.status.remove(_status)
-        self.status.append(self.Status(user=None, status=status))
+        for _status in self.statuses:
+            self.statuses.remove(_status)
+        self.statuses.append(self.Status(user=None, status=status))
         db.session.commit()
 
     @property
@@ -103,21 +102,20 @@ class StatusMixin(object):
 
         :return The status as a db.String
         """
-        if not self.status:
-            self.status.append(self.Status(user=None, status=u'new'))
-        return self.status[0]
+        if not self.statuses:
+            self.statuses.append(self.Status(user=None, status='new'))
+        return self.statuses[0]
 
 
 class CommentMixin(object):
 
     @declared_attr
-    def comment(self):
+    def comments(self):
         self.Comment = type(
             '{}_Comment'.format(self.__name__),
-            (Tag, db.Model),
+            (Comment, db.Model),
             dict(
                 __tablename__='{0:s}_comment'.format(self.__tablename__),
                 parent_id=db.Column(db.Integer, db.ForeignKey('{0:s}.id'.format(self.__tablename__))),
-                    parent=db.relationship(self)))
+                parent=db.relationship(self)))
         return db.relationship(self.Comment)
-

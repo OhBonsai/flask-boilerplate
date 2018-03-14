@@ -3,27 +3,32 @@
 # -*- coding: utf-8 -*-
 from faker import Faker
 
-from app.models.user import User
+from app.models.user import User, Group
 
 
-def test_admin():
+def create_admin():
     u = User(username='sketch')
-    u.email = 'youjiantao@gridsum.com'
+    u.email = 'letbonsaibe@gmail.com'
     u.is_admin = True
     u.set_password("123456")
     u.admin = True
     return u
 
 
-def test_user():
+def create_user():
     u = User(username='test')
-    u.email = 'youjiantao@gridsum.com'
+    u.email = 'letbonsaibe@gmail.com'
     u.set_password("123456")
     u.admin = True
     return u
 
 
-def test_users(n=50):
+def create_group():
+    g = Group(name='test')
+    return g
+
+
+def create_users(n=50):
     fake = Faker()
     fake.seed(42)
 
@@ -39,7 +44,7 @@ def test_users(n=50):
 
 def sketch(**kwargs):
     user = User(username="sketch")
-    user.email = "youjiantao@gridsum.com"
+    user.email = "letbonsaibe@gmail.com"
     user.set_password("123456")
     user.is_admin = True
     return user.apply_kwargs(kwargs), "123456"
@@ -47,6 +52,7 @@ def sketch(**kwargs):
 
 def lotus(**kwargs):
     user = User(username="sketch")
-    user.email = "youjiantao@gridsum.com"
+    user.email = "letbonsaibe@gmail.com"
     user.set_password("123456")
     return user.apply_kwargs(kwargs), "123456"
+
