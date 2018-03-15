@@ -2,7 +2,6 @@
 # Created by OhBonsai at 2018/3/9
 """Entry point for the application"""
 
-import os
 from config import config
 
 from flask import Flask
@@ -31,14 +30,19 @@ class App(Flask):
         login_manager.init_app(self)
         return self
 
+    def add_api(self):
+        from app.api.v1 import register_api
+        register_api(self)
+        return self
+
     def add_cache(self):
         from app.api.cache import cache
         cache.init_app(self)
         return self
 
     def add_logger(self):
-        from app.logger import logger
-        logger.init_app(self)
+        from app.logger import register_logger
+        register_logger(self)
         return self
 
     def add_tracer(self):
@@ -49,12 +53,17 @@ class App(Flask):
     def add_celery(self):
         return self
 
+    def add_consul(self):
+        from app.consul import register_consul
+        register_consul(self)
+        return self
+
 
 def create_app(*args, **kwargs):
     return App(*args, **kwargs)\
         .add_sqlalchemy()\
-        .add_login()
-        # .add_tracer()
+        .add_login()\
+        .add_tracer()
 
 
 def create_http_app(*args, **kwargs):
@@ -69,14 +78,14 @@ def create_api_app(*args, **kwargs):
     app = create_http_app('app.api', *args, **kwargs)
     app.add_cache()
     register_api(app)
+
+    if app.config['CUR_ENV'] in ["QA", "PROD"]:
+        app.add_consul()
     return app
 
 
-def create_no_sqlalchemy_log_api_app(*args, **kwargs):
-    import logging
-    logging.getLogger("sqlalchemy").disabled = True
-    return create_api_app(*args, **kwargs)
-
+def create_qa_app(*args, **kwargs):
+    pass
 
 
 def create_celery_app():

@@ -19,11 +19,15 @@ def register_api(app):
         # Do something before request in this method
         pass
 
+    @app.after_request
+    def change_something(response):
+        return response
+
     cors.init_app(app)
     register_error_handler(app)
 
     api_v1_bp = Blueprint('api_v1', __name__)
-    api_v1 = Api(api_v1_bp, prefix='/api/v1')
+    api_v1 = Api(api_v1_bp, prefix='/api/v1', catch_all_404s=True)
     for r in API_ROUTES:
         api_v1.add_resource(*r)
 

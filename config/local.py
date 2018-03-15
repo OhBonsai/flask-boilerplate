@@ -5,7 +5,7 @@ import os
 
 
 class LocalConfig(BaseConfig):
-    CUR_ENV = 1
+    CUR_ENV = "LOCAL"
     TESTING = False
     DEBUG = True
 

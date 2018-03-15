@@ -3,10 +3,5 @@
 import logging
 
 
-class Logger(object):
-
-    def init_app(self, app):
-        logging.basicConfig(level=logging.DEBUG)
-
-
-logger = Logger()
+def register_logger(app):
+    pass

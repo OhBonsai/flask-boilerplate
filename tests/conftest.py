@@ -7,7 +7,7 @@ import random
 import pytest
 
 from app.models import db
-from app import create_no_sqlalchemy_log_api_app
+from app import create_api_app
 from app.app import App
 
 from tests import setup_db, teardown_db, clean_db
@@ -30,7 +30,7 @@ def application():
 
     Initialized with testing config file.
     """
-    yield create_no_sqlalchemy_log_api_app(config_object="test")
+    yield create_api_app(config_object="test")
 
 
 @pytest.fixture(scope="session")

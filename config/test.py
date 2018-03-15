@@ -9,7 +9,7 @@ This config is just for unittest and apitest. In this mode, Backend and Sub Thre
 
 
 class TestConfig(BaseConfig):
-    CUR_ENV = 0
+    CUR_ENV = "TEST"
     TESTING = True
     DEBUG = True
 
