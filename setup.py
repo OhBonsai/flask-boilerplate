@@ -49,7 +49,7 @@ setup(
     include_package_data=True,
     package_data={},
     zip_safe=False,
-    scripts=['manager.py'],
+    scripts=['sktctl'],
     install_requires=[str(req.req) for req in parse_requirements(
         "requirements.txt", session=PipSession(),
     )],

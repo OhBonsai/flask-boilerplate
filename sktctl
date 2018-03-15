@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # coding=utf-8
 # Created by OhBonsai at 2018/3/12
 from app.command import shell_manager
