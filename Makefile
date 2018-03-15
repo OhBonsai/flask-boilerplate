@@ -17,6 +17,9 @@ doc:
 build:
 	python setup.py sdist
 
+install:
+	pip install `pwd`
+
 clean:
 	rm -rf ./docs/api/html
 	rm -rf ./docs/test
