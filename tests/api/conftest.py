@@ -7,7 +7,6 @@ from werkzeug.datastructures import Headers
 from flask import Response, json
 from flask.testing import FlaskClient
 
-import config
 from app import create_no_sqlalchemy_log_api_app
 from app.models import User
 
@@ -18,7 +17,7 @@ def application():
 
     Initialized once per test-run
     """
-    application = create_no_sqlalchemy_log_api_app(config.TESTING_CONF_PATH)
+    application = create_no_sqlalchemy_log_api_app(config_object="test")
     application.test_client_class = ApiClient
     application.response_class = ApiResponse
     return application

@@ -2,13 +2,10 @@
 # Created by OhBonsai at 2018/3/13
 
 
-import os
 import random
-import shutil
 
 import pytest
 
-import config
 from app.models import db
 from app import create_no_sqlalchemy_log_api_app
 from app.app import App
@@ -33,7 +30,7 @@ def application():
 
     Initialized with testing config file.
     """
-    yield create_no_sqlalchemy_log_api_app(config_file=config.TESTING_CONF_PATH)
+    yield create_no_sqlalchemy_log_api_app(config_object="test")
 
 
 @pytest.fixture(scope="session")

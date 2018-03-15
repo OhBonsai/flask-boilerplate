@@ -3,7 +3,7 @@
 """Entry point for the application"""
 
 import os
-import config
+from config import config
 
 from flask import Flask
 from flask_migrate import Migrate
@@ -11,15 +11,14 @@ from app.models import db
 
 
 class App(Flask):
-    def __init__(self, name='app', config_file=None, *args, **kwargs):
+    def __init__(self, name='app', config_object="local", config_file=None, *args, **kwargs):
         super(App, self).__init__(name, *args, **kwargs)
-        self.config.from_pyfile(config.DEFAULT_CONF_PATH)
 
         if config_file:
             self.config.from_pyfile(config_file)
+            return
 
-        if os.getenv("CONFIG_PATH"):
-            pass
+        self.config.from_object(config[config_object])
 
     def add_sqlalchemy(self):
         db.init_app(self)

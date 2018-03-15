@@ -15,7 +15,9 @@ webargs==1.2.0
 Flask-Cache==0.13.1
 raven[flask]==5.27.1
 
-
+# dev-requirements
 coverage==4.4.2
 pytest
-pytest-allure-adaptor==1.7.9
+pytest-allure-adaptor==1..9
+pytest-cov==2.5.1
+pytest-html==1.16.1

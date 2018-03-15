@@ -16,12 +16,13 @@ from app.__about__ import (
     __email__,
     __license__
 )
+from app.models import db
+
 
 application = create_app()
 
-# from app.models import db_session
-#
-# @application.teardown_appcontext
-# def shutdown_session(exception=None):
-#     """Remove the database session after every request or app shutdown"""
-#     db_session.remove()
+
+@application.teardown_appcontext
+def shutdown_session(exception=None):
+    """Remove the database session after every request or app shutdown"""
+    db.session.remove()

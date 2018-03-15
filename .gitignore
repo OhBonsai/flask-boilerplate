@@ -7,9 +7,12 @@
 # Ignore compiled Python files.
 *.py[cod]
 .cache
+.coverage
 
 # Auto Generate Doc
 docs/api/html
+docs/test
+docs/coverage
 
 
 # Local file
