@@ -47,9 +47,7 @@ setup(
     data_files=[('share/sketch', ['sketch.conf'])],
     packages=find_packages(),
     include_package_data=True,
-    package_data={
-        'sketch': ['i18n/*/LC_MESSAGES/*.mo']
-    },
+    package_data={},
     zip_safe=False,
     scripts=['manager.py'],
     install_requires=[str(req.req) for req in parse_requirements(
