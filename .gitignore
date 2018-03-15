@@ -24,3 +24,7 @@ migrations
 ## db
 test.db
 database.db
+
+# Build result
+dist
+sketch.egg-info

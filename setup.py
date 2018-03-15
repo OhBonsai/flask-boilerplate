@@ -37,6 +37,7 @@ setup(
     long_description=sketch_description,
     license='Apache License, Version 2.0',
     maintainer='OhBonsai',
+    url='https://github.com/OhBonsai/flask-boilerplate',
     maintainer_email='letbonsaibe@gmail.com',
     classifiers=[
         'Development Status :: 1 - Beta',

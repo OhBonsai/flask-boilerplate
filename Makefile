@@ -14,6 +14,9 @@ test-report:
 doc:
 	cd docs/api/ && apidoc -i ../../app/api -o html/
 
+build:
+	python setup.py sdist
+
 clean:
 	rm -rf ./docs/api/html
 	rm -rf ./docs/test
@@ -22,3 +25,4 @@ clean:
 	rm -f test.db
 	rm -f .coverage
 	rm -rf .cache
+	rm -rf dist
