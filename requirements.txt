@@ -17,6 +17,5 @@ uwsgi==2.0.15
 # dev-requirements
 coverage==4.4.2
 pytest
-pytest-allure-adaptor==1.7.9
 pytest-cov==2.5.1
 pytest-html==1.16.1
