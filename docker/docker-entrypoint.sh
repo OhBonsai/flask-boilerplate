@@ -31,7 +31,7 @@ if [ "$1" = 'sketch' ]; then
 
   # Sleep to allow the other processes to start
   sleep 5
-  sktctl add_user -u "$SKETCH_USER" -p "$SKETCH_PASSWORD"
+  sktctl add_user --user "$SKETCH_USER" --password "$SKETCH_PASSWORD"
 
   # Run the Sketch server (without SSL)
   uwsgi --ini uwsgi.ini
