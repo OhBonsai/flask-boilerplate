@@ -13,7 +13,6 @@ RUN set -e && \
 		    linux-headers \
 		    musl-dev \
 		    openssl-dev \
-		    openssl \
 		    libffi-dev\
 		    build-base\
 		&& \
@@ -26,6 +25,7 @@ RUN set -e && \
             libxml2-dev \
             libxslt-dev \
             curl \
+            openssl \
         && \
 	    cp -r -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 

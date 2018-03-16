@@ -4,6 +4,7 @@ services:
     build:
       context: ../
       dockerfile: ./docker/Dockerfile
+    image: sketch:test
     ports:
       - "18001:8001"
     links:
