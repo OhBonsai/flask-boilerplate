@@ -12,6 +12,8 @@ services:
     environment:
       - POSTGRES_ADDRESS=postgres
       - POSTGRES_PORT=5432
+      - POSTGRES_USER=sketch
+      - POSTGRES_PASSWORD=123456
       - SKETCH_CONFIG_FILE="/etc/sketch.conf"
   #    restart: always
 
