@@ -5,6 +5,6 @@ from .test import TestConfig
 
 
 config = {
-    "local": LocalConfig,
-    "test": TestConfig
+    "LOCAL": LocalConfig,
+    "TEST": TestConfig
 }

@@ -7,6 +7,9 @@ from flask_consulate import Consul
 
 
 def register_consul(app):
+    if 'CONSUL_SERVER_HOST' not in app.config:
+        return app
+
     host_ip = app.config['SERVER_HOST'] or get_ip_address(app.config['HOST_ADAPTER'])
     consul = Consul(app=app,
                     consul_host=app.config['CONSUL_SERVER_HOST'],

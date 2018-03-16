@@ -1,6 +1,8 @@
 # coding=utf-8
 # Created by OhBonsai at 2018/3/9
 """Entry point for the application"""
+import os
+import sys
 
 from config import config
 
@@ -10,14 +12,27 @@ from app.models import db
 
 
 class App(Flask):
-    def __init__(self, name='app', config_object="local", config_file=None, *args, **kwargs):
+    def __init__(self, name='app', env_level="local", config_file=None, *args, **kwargs):
         super(App, self).__init__(name, *args, **kwargs)
 
+        if os.environ.get('SKETCH_CONFIG_FILE'):
+            config_file = os.environ.get('SKETCH_CONFIG_FILE')
+
         if config_file:
-            self.config.from_pyfile(config_file)
+            os.environ['SKETCH_SETTINGS'] = config_file
+            try:
+                self.config.from_envvar('SKETCH_SETTINGS')
+            except IOError:
+                sys.stderr.write(
+                    'Config file {} does not exist.\n'.format(config_file)
+                )
+                sys.exit(1)
             return
 
-        self.config.from_object(config[config_object])
+        if os.environ.get('SKETCH_CUR_ENV'):
+            env_level = os.environ.get('SKETCH_CUR_ENV')
+
+        self.config.from_object(config[env_level])
 
     def add_sqlalchemy(self):
         db.init_app(self)

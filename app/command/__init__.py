@@ -16,11 +16,11 @@ shell_manager.add_command('add_group', AddGroup())
 shell_manager.add_command('manage_group', GroupManager())
 shell_manager.add_command('db', db_manager)
 shell_manager.add_command('migrate', MigrateCommand)
-shell_manager.add_command('runserver', Server(host='127.0.0.1', port=5000))
+shell_manager.add_command('runserver', Server(host='127.0.0.1', port=8001))
 shell_manager.add_option(
     '-c',
     '--config',
     dest='config_file',
-    # default='./config/default.conf.py',
+    default=None,
     required=False)
 
