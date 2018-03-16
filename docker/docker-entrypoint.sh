@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Run the container the default way
 
