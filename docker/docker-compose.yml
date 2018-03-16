@@ -1,33 +1,34 @@
-sketch:
-  build:
-    context: ../
-    dockerfile: ./docker/Dockerfile
-  ports:
-    - "18001:8001"
-  links:
-    - postgres
-  environment:
-    - POSTGRES_ADDRESS=postgres
-    - POSTGRES_PORT=5432
-    - SKETCH_CONFIG_FILE=/etc/sketch.conf
-#    restart: always
+version: "2"
+  sketch:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - "18001:8001"
+    links:
+      - postgres
+    environment:
+      - POSTGRES_ADDRESS=postgres
+      - POSTGRES_PORT=5432
+      - SKETCH_CONFIG_FILE="/etc/sketch.conf"
+  #    restart: always
 
-nginx:
-  image: nginx:alpine
-  links:
-    - sketch:uwsgi
-  ports:
-    - "80:80"
-  volumes:
-    - ./nginx.conf:/etc/nginx/nginx.conf
+  nginx:
+    image: nginx:alpine
+    links:
+      - sketch:uwsgi
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
 
-postgres:
-  image: postgres:9.6
-  ports:
-    - "5432:5432"
-  environment:
-    - POSTGRES_USER=sketch
-    - POSTGRES_PASSWORD=123456
-#    restart: always
-  volumes:
-    - /var/lib/postgresql/data:/var/lib/postgresql/data
+  postgres:
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=sketch
+      - POSTGRES_PASSWORD=123456
+  #    restart: always
+    volumes:
+      - /var/lib/postgresql/data:/var/lib/postgresql/data

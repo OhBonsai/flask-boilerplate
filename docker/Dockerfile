@@ -12,7 +12,10 @@ RUN set -e && \
 		    libc-dev \
 		    linux-headers \
 		    musl-dev \
+		    openssl-dev \
 		    openssl \
+		    libffi-dev\
+		    build-base\
 		&& \
 		apk add --no-cache \
 		    tzdata \
