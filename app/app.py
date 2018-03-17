@@ -94,7 +94,7 @@ def create_api_app(*args, **kwargs):
     app.add_cache()
     register_api(app)
 
-    if app.config['CUR_ENV'] in ["QA", "PROD"]:
+    if app.config.get('CUR_ENV') in ["QA", "PROD"]:
         app.add_consul()
     return app
 

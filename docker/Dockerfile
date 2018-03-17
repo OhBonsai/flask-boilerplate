@@ -49,6 +49,9 @@ RUN chmod a+x /docker-entrypoint.sh
 # Expose the port used by Sketch
 EXPOSE 8001
 
+# Create Log Folder
+RUN mkdir -p /logs
+
 # Load the entrypoint script to be run later
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
