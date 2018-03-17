@@ -12,7 +12,7 @@ from app.models import db
 
 
 class App(Flask):
-    def __init__(self, name='app', env_level="local", config_file=None, *args, **kwargs):
+    def __init__(self, name='app', env_level="LOCAL", config_file=None, *args, **kwargs):
         super(App, self).__init__(name, *args, **kwargs)
 
         if os.environ.get('SKETCH_CONFIG_FILE'):
