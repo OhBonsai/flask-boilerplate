@@ -38,4 +38,4 @@ if [ "$1" = 'sketch' ]; then
 fi
 
 # Run a custom command on container start
-exec "T$1"
+exec "$@"
