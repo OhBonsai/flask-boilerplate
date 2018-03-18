@@ -24,7 +24,7 @@ class User(UserMixin, db.Model):
     """Implements the User model."""
 
     username = db.Column(db.String(32), unique=True)
-    password = db.Column(db.String(32))
+    password = db.Column(db.String(64))
     chinese_name = db.Column(db.String(32))
     email = db.Column(db.String(32))
     is_admin = db.Column(db.Boolean, default=False)
