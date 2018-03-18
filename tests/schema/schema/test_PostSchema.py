@@ -43,7 +43,6 @@ def test_passed_deserialization_post_instance(db_session):
     add_fixture(db_session, post)
 
     data = PostSchema().dump(post).data
-    print(data)
 
     assert data['id'] == post.id
     assert data['author'] == user.username

@@ -17,7 +17,7 @@ def application():
 
     Initialized once per test-run
     """
-    application = create_api_app(config_object="test")
+    application = create_api_app(env_level="TEST")
     application.test_client_class = ApiClient
     application.response_class = ApiResponse
     return application

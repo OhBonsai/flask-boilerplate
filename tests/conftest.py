@@ -30,7 +30,7 @@ def application():
 
     Initialized with testing config file.
     """
-    yield create_api_app(config_object="test")
+    yield create_api_app(env_level="TEST")
 
 
 @pytest.fixture(scope="session")
