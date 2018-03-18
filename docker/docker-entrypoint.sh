@@ -5,7 +5,7 @@
 if [ "$1" = 'sketch' ]; then
   # Set SECRET_KEY in /etc/sketch.conf if it isn't already set
   if grep -q "SECRET_KEY = '<KEY_GOES_HERE>'" /etc/sketch.conf; then
-    OPENSSL_RAND=$( openssl rand -base64 32 )
+    OPENSSL_RAND=$( openssl rand -base64 16 )
     # Using the pound sign as a delimiter to avoid problems with / being output from openssl
     sed -i 's#SECRET_KEY = \x27\x3CKEY_GOES_HERE\x3E\x27#SECRET_KEY = "'$OPENSSL_RAND'"#' /etc/sketch.conf
   fi
@@ -30,6 +30,7 @@ if [ "$1" = 'sketch' ]; then
   fi
 
   # Migrate db
+  sktctl migrate init
   sktctl migrate migrate
   sktctl migrate upgrade
 
