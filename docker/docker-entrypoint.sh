@@ -29,13 +29,14 @@ if [ "$1" = 'sketch' ]; then
     echo "SKETCH_PASSWORD set randomly to: ${SKETCH_PASSWORD}";
   fi
 
+  # Migrate db
+  sktctl migrate migrate
+  sktctl migrate upgrade
+
   # Sleep to allow the other processes to start
   sleep 5
   sktctl add_user --username "$SKETCH_USER" --password "$SKETCH_PASSWORD"
-
-  # Run the Sketch server (without SSL)
-  uwsgi --ini uwsgi.ini
 fi
 
-# Run a custom command on container start
-exec "The first param is $1"
+# Run the Sketch server (without SSL)
+exec uwsgi --ini uwsgi.ini

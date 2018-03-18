@@ -20,3 +20,4 @@ pytest
 pytest-cov==2.5.1
 pytest-html==1.16.1
 psycopg2
+gevent
