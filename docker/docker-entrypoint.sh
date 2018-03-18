@@ -25,7 +25,7 @@ if [ "$1" = 'sketch' ]; then
     echo "SKETCH_USER set to default: ${SKETCH_USER}";
   fi
   if [ -z ${SKETCH_PASSWORD+x} ]; then
-    SKETCH_PASSWORD="$(openssl rand -base64 32)"
+    SKETCH_PASSWORD="$(openssl rand -base64 16)"
     echo "SKETCH_PASSWORD set randomly to: ${SKETCH_PASSWORD}";
   fi
 
